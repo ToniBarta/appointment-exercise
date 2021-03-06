@@ -13,8 +13,8 @@ import static appointment.AppoinmentConsts.*;
 public class RangeSearchImpl {
 
     public static void searchInRange(String from, String to, List<AppointmentSlot> appointmentSlotList) {
-        LocalDate fromSearchRangeLocalDate = createLocalDate(from.split("-"));
-        LocalDate toSearchRangeLocalDate = createLocalDate(to.split("-"));
+        LocalDate fromSearchRangeLocalDate = createLocalDate(from);
+        LocalDate toSearchRangeLocalDate = createLocalDate(to);
 
         List<AppointmentSlot> freeSlots = new ArrayList<>();
 
@@ -57,7 +57,16 @@ public class RangeSearchImpl {
                 || (fromSearchRangeLocalDate.isEqual(appointmentFromLocaleDate) && toSearchRangeLocalDate.isEqual(appointmentFromLocaleDate));
     }
 
-    protected static LocalDate createLocalDate(String[] regexSplitString) {
-        return LocalDate.of(Integer.parseInt(regexSplitString[0]), Integer.parseInt(regexSplitString[1]), Integer.parseInt(regexSplitString[2]));
+    protected static LocalDate createLocalDate(String stringDate) {
+        try {
+            String[] regexSplitString = stringDate.split("-");
+            return LocalDate.of(Integer.parseInt(regexSplitString[0]), Integer.parseInt(regexSplitString[1]), Integer.parseInt(regexSplitString[2]));
+        }
+        catch(NumberFormatException exception) {
+            throw new NumberFormatException("The date should have the following format: 2021-01-05");
+        }
+        catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

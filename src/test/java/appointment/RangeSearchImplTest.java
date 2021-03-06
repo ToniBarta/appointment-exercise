@@ -2,6 +2,7 @@ package appointment;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.w3c.dom.ranges.Range;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -87,6 +88,27 @@ public class RangeSearchImplTest {
         LocalDate toSearchRange = LocalDate.of(2021, 5, 4);
 
         Assert.assertFalse(RangeSearchImpl.isBetweenSearchRange(fromSearchRange, toSearchRange, appointmentAfterSearchRange));
+    }
+
+    @Test(expected = NumberFormatException.class)
+    public void createLocalDateWhenDoesNotContainHyphen() {
+        String date = "2021/02/05";
+        RangeSearchImpl.createLocalDate(date);
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void createLocalDateWhenDoesNotContainCorrectDates() {
+        String date = "2021-15-40";
+        RangeSearchImpl.createLocalDate(date);
+    }
+
+    @Test
+    public void createLocalDate() {
+        String date = "2021-01-01";
+        LocalDate localDate = RangeSearchImpl.createLocalDate(date);
+
+        LocalDate expectedDate = LocalDate.of(2021, 1, 1);
+        Assert.assertEquals(localDate, expectedDate);
     }
 
 }
