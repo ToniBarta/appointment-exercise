@@ -11,7 +11,6 @@ import static appointment.AppoinmentConsts.*;
 
 public class RangeSearchImpl {
 
-
     public static List<AppointmentSlot> searchInRange2(String from, String to, List<AppointmentSlot> appointmentSlotList) {
         LocalDate fromSearchRangeLocalDate = createLocalDate(from);
         LocalDate toSearchRangeLocalDate = createLocalDate(to);
@@ -54,6 +53,23 @@ public class RangeSearchImpl {
                             freeSlots.add(new AppointmentSlot(rememberEndOfAppointment, LocalDateTime.of(appointmentFromLocaleDate, END_OF_DAY)));
                         }
 
+                        visitedDay.put(appointmentFromLocaleDate, true);
+                    } else {
+                        LocalDateTime rememberEndOfAppointment = appointmentSlot.getTo();
+
+                        // while next slot is same day cont with finding empty app slots
+                        while (nextApp < appointmentSlotList.size() && appointmentSlotList.get(nextApp).getFrom().toLocalDate().isEqual(rememberEndOfAppointment.toLocalDate())) {
+                            freeSlots.add(new AppointmentSlot(rememberEndOfAppointment, appointmentSlotList.get(nextApp).getFrom()));
+                            rememberEndOfAppointment = appointmentSlotList.get(nextApp).getTo();
+                            nextApp = nextApp + 1;
+                        }
+
+                        // when this while loop is over it means that we have went trough all the day
+                        // and we need to check if there is some time until the end of the day
+                        if (rememberEndOfAppointment.toLocalTime().isBefore(END_OF_DAY)) {
+                            // we have another free slot
+                            freeSlots.add(new AppointmentSlot(rememberEndOfAppointment, LocalDateTime.of(appointmentFromLocaleDate, END_OF_DAY)));
+                        }
                         visitedDay.put(appointmentFromLocaleDate, true);
                     }
                 }
