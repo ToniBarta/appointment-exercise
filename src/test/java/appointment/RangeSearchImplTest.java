@@ -174,4 +174,16 @@ public class RangeSearchImplTest {
         Assert.assertEquals(freeSlots.size(), 1);
     }
 
+    @Test
+    public void searchInRangeWhenAppointmentIsLastOnTheDay() {
+        List<AppointmentSlot> appointmentSlotList = new ArrayList<>();
+
+        LocalDateTime app1From = LocalDateTime.of(2021, 5, 5, 15,0);
+        LocalDateTime app1To = LocalDateTime.of(2021, 5, 5, 18,0); // use end of day
+        appointmentSlotList.add(new AppointmentSlot(app1From, app1To));
+
+        List<AppointmentSlot> freeSlots = RangeSearchImpl.searchInRange2("2021-05-05", "2021-05-05", appointmentSlotList);
+        Assert.assertEquals(freeSlots.size(), 1);
+    }
+
 }
