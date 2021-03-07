@@ -1,11 +1,14 @@
 package appointment;
 
+import domain.AppointmentSlot;
 import org.junit.Assert;
 import org.junit.Test;
-import org.w3c.dom.ranges.Range;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static appointment.AppoinmentConsts.END_OF_LUNCH;
 import static appointment.AppoinmentConsts.START_OF_LUNCH;
@@ -109,6 +112,54 @@ public class RangeSearchImplTest {
 
         LocalDate expectedDate = LocalDate.of(2021, 1, 1);
         Assert.assertEquals(localDate, expectedDate);
+    }
+
+    @Test
+    public void searchInRangeOnTheSameDay() {
+        List<AppointmentSlot> appointmentSlotList = new ArrayList<>();
+
+        LocalDateTime app1From = LocalDateTime.of(2021, 5, 5, 9,0);
+        LocalDateTime app1To = LocalDateTime.of(2021, 5, 5, 10,0);
+        appointmentSlotList.add(new AppointmentSlot(app1From, app1To));
+
+        LocalDateTime app2From = LocalDateTime.of(2021, 5, 5, 14,30);
+        LocalDateTime app2To = LocalDateTime.of(2021, 5, 5, 15,0);
+        appointmentSlotList.add(new AppointmentSlot(app2From, app2To));
+
+        LocalDateTime app3From = LocalDateTime.of(2021, 5, 5, 16,30);
+        LocalDateTime app3To = LocalDateTime.of(2021, 5, 5, 17,0);
+        appointmentSlotList.add(new AppointmentSlot(app3From, app3To));
+
+        List<AppointmentSlot> freeSlots = RangeSearchImpl.searchInRange2("2021-05-05", "2021-05-05", appointmentSlotList);
+        Assert.assertEquals(freeSlots.size(), 4);
+    }
+
+    @Test
+    public void searchInRangeOnMultipleDays() {
+        List<AppointmentSlot> appointmentSlotList = new ArrayList<>();
+
+        LocalDateTime app1From = LocalDateTime.of(2021, 5, 5, 9,0);
+        LocalDateTime app1To = LocalDateTime.of(2021, 5, 5, 10,0);
+        appointmentSlotList.add(new AppointmentSlot(app1From, app1To));
+
+        LocalDateTime app2From = LocalDateTime.of(2021, 5, 5, 14,30);
+        LocalDateTime app2To = LocalDateTime.of(2021, 5, 5, 15,0);
+        appointmentSlotList.add(new AppointmentSlot(app2From, app2To));
+
+        LocalDateTime app3From = LocalDateTime.of(2021, 5, 5, 16,30);
+        LocalDateTime app3To = LocalDateTime.of(2021, 5, 5, 17,0);
+        appointmentSlotList.add(new AppointmentSlot(app3From, app3To));
+
+        LocalDateTime app4From = LocalDateTime.of(2021, 5, 6, 13,30);
+        LocalDateTime app4To = LocalDateTime.of(2021, 5, 6, 14,30);
+        appointmentSlotList.add(new AppointmentSlot(app4From, app4To));
+
+        LocalDateTime app5From = LocalDateTime.of(2021, 5, 6, 16,30);
+        LocalDateTime app5To = LocalDateTime.of(2021, 5, 6, 17,0);
+        appointmentSlotList.add(new AppointmentSlot(app5From, app5To));
+
+        List<AppointmentSlot> freeSlots = RangeSearchImpl.searchInRange2("2021-05-05", "2021-05-06", appointmentSlotList);
+        Assert.assertEquals(freeSlots.size(), 7);
     }
 
 }

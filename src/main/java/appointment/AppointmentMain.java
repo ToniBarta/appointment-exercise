@@ -2,9 +2,7 @@ package appointment;
 
 import domain.AppointmentSlot;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,13 +46,3 @@ public class AppointmentMain {
 
 }
 
-
-//
-//const weeklyAppointments = [
-//        { from: "2021-01-04T10:00:00", to: "2021-01-04T10:30:00" },
-//        { from: "2021-01-05T11:00:00", to: "2021-01-05T11:30:00" },
-//        { from: "2021-01-05T15:30:00", to: "2021-01-05T16:30:00" },
-//        { from: "2021-01-06T10:00:00", to: "2021-01-06T10:30:00" },
-//        { from: "2021-01-06T11:00:00", to: "2021-01-06T12:30:00" },
-//        { from: "2021-01-06T17:30:00", to: "2021-01-06T18:00:00" },
-//        ];
