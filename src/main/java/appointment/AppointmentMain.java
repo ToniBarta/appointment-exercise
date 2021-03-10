@@ -5,6 +5,7 @@ import domain.AppointmentSlot;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class AppointmentMain {
 
@@ -42,6 +43,14 @@ public class AppointmentMain {
         appointmentSlotList.add(new AppointmentSlot(app6From, app6To));
 
 //        searchInRange("2021-02-04", "2021-02-05");
+
+        Scanner myObj = new Scanner(System.in);  // Create a Scanner object
+        System.out.println("Enter username");
+
+        String userName = myObj.nextLine();  // Read user input
+        System.out.println("Username is: " + userName);  // Output user input
+
+        
     }
 
 }
