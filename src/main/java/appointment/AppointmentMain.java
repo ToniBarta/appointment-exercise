@@ -2,7 +2,6 @@ package appointment;
 
 import domain.AppointmentSlot;
 
-import java.awt.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -63,6 +62,10 @@ public class AppointmentMain {
                     System.out.printf("Your booking is confirmed on the following date: %s between: %s and %s %n", localDate, fromTime, toTime);
                 }
             }
+
+            if (selectedOption.equals("4")) {
+                printMainMenu();
+            }
         }
     }
 
@@ -77,7 +80,7 @@ public class AppointmentMain {
         System.out.println("4 See this main menu again?");
         System.out.println("-------------------------------------------");
 
-        System.out.println("Please enter a number as described above to continue: eg. 1: ");
+        System.out.println("Please enter a number as described above to continue: eg. 1 and press ENTER");
     }
 
     private static void printSlots(List<AppointmentSlot> appointmentSlotList) {
