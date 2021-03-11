@@ -35,7 +35,6 @@ public class RangeSearchImpl {
                 createFreeSlotsForTheDay(freeAppointments, appointmentsOfTheDay);
             }
         }
-        System.out.println(freeAppointments);
         return freeAppointments;
     }
 
@@ -66,7 +65,12 @@ public class RangeSearchImpl {
                 freeAppointments.add(new AppointmentSlot(currentApp.getTo(), nextApp.getFrom()));
                 freeSlotFromStartOfDay = false;
             } else {
-                freeAppointments.add(new AppointmentSlot(currentApp.getTo(), nextApp.getFrom()));
+                if (currentLocalTimeFrom.equals(START_OF_DAY)) {
+                    freeSlotFromStartOfDay = false;
+                }
+                if (!currentApp.getTo().equals(nextApp.getFrom())) {
+                    freeAppointments.add(new AppointmentSlot(currentApp.getTo(), nextApp.getFrom()));
+                }
             }
         }
         AppointmentSlot lastApp = appointmentsOfTheDayWithLunch.get(appointmentsOfTheDayWithLunch.size() - 1);
@@ -112,6 +116,20 @@ public class RangeSearchImpl {
         if (localTimeTo.equals(END_OF_DAY)) {
             freeAppointments.add(new AppointmentSlot(LocalDateTime.of(appointmentSlot.getFrom().toLocalDate(), START_OF_DAY), LocalDateTime.of(appointmentSlot.getFrom().toLocalDate(), START_OF_LUNCH)));
             freeAppointments.add(new AppointmentSlot(LocalDateTime.of(appointmentSlot.getFrom().toLocalDate(), END_OF_LUNCH), appointmentSlot.getFrom()));
+            return freeAppointments;
+        }
+
+        if (localTimeFrom.isBefore(START_OF_LUNCH)) {
+            freeAppointments.add(new AppointmentSlot(LocalDateTime.of(appointmentSlot.getFrom().toLocalDate(), START_OF_DAY), appointmentSlot.getFrom()));
+            freeAppointments.add(new AppointmentSlot(appointmentSlot.getTo(), LocalDateTime.of(appointmentSlot.getFrom().toLocalDate(), START_OF_LUNCH)));
+            freeAppointments.add(new AppointmentSlot(LocalDateTime.of(appointmentSlot.getFrom().toLocalDate(), END_OF_LUNCH), LocalDateTime.of(appointmentSlot.getFrom().toLocalDate(), END_OF_DAY)));
+            return freeAppointments;
+        }
+
+        if (localTimeFrom.isAfter(END_OF_LUNCH)) {
+            freeAppointments.add(new AppointmentSlot(LocalDateTime.of(appointmentSlot.getFrom().toLocalDate(), START_OF_DAY), LocalDateTime.of(appointmentSlot.getFrom().toLocalDate(), START_OF_LUNCH)));
+            freeAppointments.add(new AppointmentSlot(LocalDateTime.of(appointmentSlot.getFrom().toLocalDate(), END_OF_LUNCH), appointmentSlot.getFrom()));
+            freeAppointments.add(new AppointmentSlot(appointmentSlot.getTo(), LocalDateTime.of(appointmentSlot.getFrom().toLocalDate(), END_OF_DAY)));
             return freeAppointments;
         }
 

@@ -2,6 +2,8 @@ package appointment;
 
 public class InputValidation {
 
+    //also validation if the toInput is larger than the fromInput
+
     // this method can have a lot of other ways of testing the input. E.G if the month or date is correct, but
     // will not add this at this time.
     public static boolean validateDateInput(String date) {
@@ -13,6 +15,8 @@ public class InputValidation {
         return true;
     }
 
+    // this method can have a lot of other ways of testing the input. E.G if the month or date is correct, but
+    // will not add this at this time.
     public static boolean validateHourInput(String hour) {
         String[] regex = hour.split(":");
         if (regex.length != 2) {

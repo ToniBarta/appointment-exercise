@@ -8,15 +8,15 @@ import java.time.LocalTime;
 import java.util.*;
 import java.util.List;
 
-import static appointment.PrintingUtil.printMainMenu;
-import static appointment.PrintingUtil.printSlots;
+import static appointment.PrintingUtil.*;
 
 public class AppointmentMain {
 
-    public static List<AppointmentSlot> appointmentSlotList = new ArrayList<>();
+    public static List<AppointmentSlot> appointments = new ArrayList<>();
 
     public static void main(String[] args) {
-        generateStaticAppointments(appointmentSlotList);
+        generateStaticAppointments(appointments);
+        printHeader();
         printMainMenu();
 
         Scanner scanner = new Scanner(System.in);
@@ -24,7 +24,8 @@ public class AppointmentMain {
             String selectedOption = scanner.nextLine();
 
             if (selectedOption.equals("1")) {
-                printSlots(appointmentSlotList);
+                printSlots(appointments);
+                printMainMenu();
             }
 
             if (selectedOption.equals("2")) {
@@ -42,8 +43,9 @@ public class AppointmentMain {
                     toDate = scanner.nextLine();
                 }
 
-                List<AppointmentSlot> availableSlots = RangeSearchImpl.searchInRange(fromDate, toDate, appointmentSlotList);
+                List<AppointmentSlot> availableSlots = RangeSearchImpl.searchInRange(fromDate, toDate, appointments);
                 printSlots(availableSlots);
+                printMainMenu();
             }
 
             if (selectedOption.equals("3")) {
@@ -57,13 +59,13 @@ public class AppointmentMain {
 
                 System.out.println("From what hour? eg. hh:mm");
                 String fromHour = scanner.nextLine();
-                while (!InputValidation.validateHourInput(date)) {
+                while (!InputValidation.validateHourInput(fromHour)) {
                     fromHour = scanner.nextLine();
                 }
 
                 System.out.println("Until what hour? eg hh:mm");
                 String toHour = scanner.nextLine();
-                while (!InputValidation.validateHourInput(date)) {
+                while (!InputValidation.validateHourInput(toHour)) {
                     toHour = scanner.nextLine();
                 }
 
@@ -74,14 +76,12 @@ public class AppointmentMain {
                 AppointmentSlot newAppointment = new AppointmentSlot(LocalDateTime.of(localDate, fromTime), LocalDateTime.of(localDate, toTime));
 
                 // this will not fully work
-                if (appointmentSlotList.contains(newAppointment)) {
+                if (appointments.contains(newAppointment)) {
                     System.out.println("This time for this day is already taken. Please press 2 to view available slots.");
                 } else {
                     System.out.printf("Your booking is confirmed on the following date: %s between: %s and %s %n", localDate, fromTime, toTime);
+                    appointments.add(newAppointment);
                 }
-            }
-
-            if (selectedOption.equals("4")) {
                 printMainMenu();
             }
         }
@@ -101,6 +101,9 @@ public class AppointmentMain {
 
         now = now.plusDays(1);
         appointments.add(new AppointmentSlot(now.atTime(8, 30), now.atTime(12, 0)));
+
+        now = now.plusDays(1);
+        appointments.add(new AppointmentSlot(now.atTime(16, 30), now.atTime(17, 0)));
 
         now = now.plusDays(1);
         appointments.add(new AppointmentSlot(now.atTime(8, 30), now.atTime(9, 0)));
