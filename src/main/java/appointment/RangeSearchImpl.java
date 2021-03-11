@@ -161,4 +161,15 @@ public class RangeSearchImpl {
             throw new RuntimeException(e);
         }
     }
+
+    protected static LocalTime crateLocalTime(String stringTime) {
+        try {
+            String[] regexSplitString = stringTime.split(":");
+            return LocalTime.of(Integer.parseInt(regexSplitString[0]), Integer.parseInt(regexSplitString[1]));
+        } catch (NumberFormatException exception) {
+            throw new NumberFormatException("The time should have the following format: 9:00 or 14:30");
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
