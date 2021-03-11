@@ -5,17 +5,18 @@ import domain.AppointmentSlot;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.Month;
 import java.util.*;
 import java.util.List;
+
+import static appointment.PrintingUtil.printMainMenu;
+import static appointment.PrintingUtil.printSlots;
 
 public class AppointmentMain {
 
     public static List<AppointmentSlot> appointmentSlotList = new ArrayList<>();
 
     public static void main(String[] args) {
-        generateRandomAppointments(appointmentSlotList);
-
+        generateStaticAppointments(appointmentSlotList);
         printMainMenu();
 
         Scanner scanner = new Scanner(System.in);
@@ -28,12 +29,18 @@ public class AppointmentMain {
 
             if (selectedOption.equals("2")) {
                 System.out.printf("Can you select a range between %s and %s ?%n", LocalDate.now().toString(), LocalDate.now().plusDays(5).toString());
+
                 System.out.println("Input the start date: ");
                 String fromDate = scanner.nextLine();
+                while (!InputValidation.validateDateInput(fromDate)) {
+                    fromDate = scanner.nextLine();
+                }
+
                 System.out.println("Input the end date: ");
                 String toDate = scanner.nextLine();
-
-//                add Validation
+                while (!InputValidation.validateDateInput(toDate)) {
+                    toDate = scanner.nextLine();
+                }
 
                 List<AppointmentSlot> availableSlots = RangeSearchImpl.searchInRange(fromDate, toDate, appointmentSlotList);
                 printSlots(availableSlots);
@@ -41,14 +48,25 @@ public class AppointmentMain {
 
             if (selectedOption.equals("3")) {
                 System.out.printf("Today's date is: %s - %s %n", LocalDate.now(), LocalDate.now().getDayOfWeek());
+
                 System.out.println("On what date do you want the booking to be? ");
                 String date = scanner.nextLine();
-                System.out.println("From what hour?");
-                String fromHour = scanner.nextLine();
-                System.out.println("Until what hour?");
-                String toHour = scanner.nextLine();
+                while (!InputValidation.validateDateInput(date)) {
+                    date = scanner.nextLine();
+                }
 
-//                add Validation
+                System.out.println("From what hour? eg. hh:mm");
+                String fromHour = scanner.nextLine();
+                while (!InputValidation.validateHourInput(date)) {
+                    fromHour = scanner.nextLine();
+                }
+
+                System.out.println("Until what hour? eg hh:mm");
+                String toHour = scanner.nextLine();
+                while (!InputValidation.validateHourInput(date)) {
+                    toHour = scanner.nextLine();
+                }
+
                 LocalDate localDate = RangeSearchImpl.createLocalDate(date);
                 LocalTime fromTime = RangeSearchImpl.crateLocalTime(fromHour);
                 LocalTime toTime = RangeSearchImpl.crateLocalTime(toHour);
@@ -69,37 +87,8 @@ public class AppointmentMain {
         }
     }
 
-    private static void printMainMenu() {
-        System.out.println("-------------------------------------------");
-        System.out.println("Welcome to Toni's minimal appointment system");
-        System.out.println("-------------------------------------------");
-        System.out.println("Here are a couple of thing that you can do.");
-        System.out.println("1 See current bookings");
-        System.out.println("2 See available slots");
-        System.out.println("3 Make a booking");
-        System.out.println("4 See this main menu again?");
-        System.out.println("-------------------------------------------");
-
-        System.out.println("Please enter a number as described above to continue: eg. 1 and press ENTER");
-    }
-
-    private static void printSlots(List<AppointmentSlot> appointmentSlotList) {
-        HashMap<LocalDate, List<AppointmentSlot>> sameDayAppointmentsMap = RangeSearchImpl.getSameDayAppointmentsMap(appointmentSlotList);
-
-        // sort the key by dates from lower to higher
-        TreeSet<LocalDate> localDates = new TreeSet<>(sameDayAppointmentsMap.keySet());
-
-        localDates.forEach(key -> {
-                    List<AppointmentSlot> appointmentSlots = sameDayAppointmentsMap.get(key);
-                    System.out.printf("Date: %s :  | " ,key);
-                    for (AppointmentSlot slot: appointmentSlots) {
-                        System.out.printf("%s - %s  | ", slot.getFrom().toLocalTime(), slot.getTo().toLocalTime());
-                    }
-                    System.out.println();
-                });
-    }
-
-    private static void generateRandomAppointments(List<AppointmentSlot> appointments) {
+    // I wanted to make this a random generator from today's day but it would have taken some more time.
+    private static void generateStaticAppointments(List<AppointmentSlot> appointments) {
         LocalDate now = LocalDate.now();
 
         appointments.add(new AppointmentSlot(now.atTime(8, 0), now.atTime(9, 30)));
@@ -117,14 +106,5 @@ public class AppointmentMain {
         appointments.add(new AppointmentSlot(now.atTime(8, 30), now.atTime(9, 0)));
         appointments.add(new AppointmentSlot(now.atTime(13, 30), now.atTime(14, 30)));
     }
-
-    private void createAppointment(List<AppointmentSlot> appointmentSlotList,
-                                   int dayFrom, int hourFrom, int minuteFrom,
-                                   int dayTo, int hourTo, int minuteTo) {
-        LocalDateTime from = LocalDateTime.of(2021, Month.MAY, dayFrom, hourFrom, minuteFrom);
-        LocalDateTime to = LocalDateTime.of(2021, Month.MAY, dayTo, hourTo, minuteTo);
-        appointmentSlotList.add(new AppointmentSlot(from, to));
-    }
-
 }
 
