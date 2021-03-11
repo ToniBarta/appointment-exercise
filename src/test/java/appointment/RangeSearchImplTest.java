@@ -6,8 +6,9 @@ import org.junit.Test;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.Month;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static appointment.AppoinmentConsts.*;
@@ -15,7 +16,6 @@ import static appointment.AppoinmentConsts.*;
 public class RangeSearchImplTest {
 
     public static final int YEAR = 2021;
-    public static final int MONTH_05 = 5;
 
     private List<AppointmentSlot> freeSlots = new ArrayList<>();
 
@@ -32,7 +32,7 @@ public class RangeSearchImplTest {
         List<AppointmentSlot> freeSlotsWhenOnlyOneAppointmentPerDay = RangeSearchImpl.createFreeSlotsWhenOnlyOneAppointmentPerDay(freeSlots, appointmentSlotList);
         Assert.assertEquals(freeSlotsWhenOnlyOneAppointmentPerDay.size(), 1);
 
-        Assert.assertEquals(freeSlotsWhenOnlyOneAppointmentPerDay.get(0).getFrom(), LocalDateTime.of(YEAR, MONTH_05, 5, 13, 0));
+        Assert.assertEquals(freeSlotsWhenOnlyOneAppointmentPerDay.get(0).getFrom(), LocalDateTime.of(YEAR, Month.MAY, 5, 13, 0));
         Assert.assertEquals(freeSlotsWhenOnlyOneAppointmentPerDay.get(0).getTo(), LocalDateTime.of(localDate, END_OF_DAY));
     }
 
@@ -49,7 +49,7 @@ public class RangeSearchImplTest {
         List<AppointmentSlot> freeSlotsWhenOnlyOneAppointmentPerDay = RangeSearchImpl.createFreeSlotsWhenOnlyOneAppointmentPerDay(freeSlots, appointmentSlotList);
         Assert.assertEquals(freeSlotsWhenOnlyOneAppointmentPerDay.size(), 2);
 
-        Assert.assertEquals(freeSlotsWhenOnlyOneAppointmentPerDay.get(0).getFrom(), LocalDateTime.of(YEAR, MONTH_05, 5, 10, 0));
+        Assert.assertEquals(freeSlotsWhenOnlyOneAppointmentPerDay.get(0).getFrom(), LocalDateTime.of(YEAR, Month.MAY, 5, 10, 0));
         Assert.assertEquals(freeSlotsWhenOnlyOneAppointmentPerDay.get(0).getTo(), LocalDateTime.of(localDate, START_OF_LUNCH));
 
         Assert.assertEquals(freeSlotsWhenOnlyOneAppointmentPerDay.get(1).getFrom(), LocalDateTime.of(localDate, END_OF_LUNCH));
@@ -70,7 +70,7 @@ public class RangeSearchImplTest {
         Assert.assertEquals(freeSlotsWhenOnlyOneAppointmentPerDay.size(), 2);
 
         Assert.assertEquals(freeSlotsWhenOnlyOneAppointmentPerDay.get(0).getFrom(), LocalDateTime.of(localDate, START_OF_DAY));
-        Assert.assertEquals(freeSlotsWhenOnlyOneAppointmentPerDay.get(0).getTo(), LocalDateTime.of(YEAR, MONTH_05, 5, 10, 0));
+        Assert.assertEquals(freeSlotsWhenOnlyOneAppointmentPerDay.get(0).getTo(), LocalDateTime.of(YEAR, Month.MAY, 5, 10, 0));
 
         Assert.assertEquals(freeSlotsWhenOnlyOneAppointmentPerDay.get(1).getFrom(), LocalDateTime.of(localDate, END_OF_LUNCH));
         Assert.assertEquals(freeSlotsWhenOnlyOneAppointmentPerDay.get(1).getTo(), LocalDateTime.of(localDate, END_OF_DAY));
@@ -92,7 +92,7 @@ public class RangeSearchImplTest {
         Assert.assertEquals(freeSlotsWhenOnlyOneAppointmentPerDay.get(0).getFrom(), LocalDateTime.of(localDate, START_OF_DAY));
         Assert.assertEquals(freeSlotsWhenOnlyOneAppointmentPerDay.get(0).getTo(), LocalDateTime.of(localDate, START_OF_LUNCH));
 
-        Assert.assertEquals(freeSlotsWhenOnlyOneAppointmentPerDay.get(1).getFrom(), LocalDateTime.of(YEAR, MONTH_05, 5, 15, 0));
+        Assert.assertEquals(freeSlotsWhenOnlyOneAppointmentPerDay.get(1).getFrom(), LocalDateTime.of(YEAR, Month.MAY, 5, 15, 0));
         Assert.assertEquals(freeSlotsWhenOnlyOneAppointmentPerDay.get(1).getTo(), LocalDateTime.of(localDate, END_OF_DAY));
     }
 
@@ -130,17 +130,8 @@ public class RangeSearchImplTest {
         Assert.assertEquals(freeSlotsWhenOnlyOneAppointmentPerDay.get(0).getTo(), LocalDateTime.of(localDate, START_OF_LUNCH));
 
         Assert.assertEquals(freeSlotsWhenOnlyOneAppointmentPerDay.get(1).getFrom(), LocalDateTime.of(localDate, END_OF_LUNCH));
-        Assert.assertEquals(freeSlotsWhenOnlyOneAppointmentPerDay.get(1).getTo(), LocalDateTime.of(YEAR, MONTH_05, 5, 15, 0));
+        Assert.assertEquals(freeSlotsWhenOnlyOneAppointmentPerDay.get(1).getTo(), LocalDateTime.of(YEAR, Month.MAY, 5, 15, 0));
     }
-
-    private void createAppointment(List<AppointmentSlot> appointmentSlotList,
-                                   int dayFrom, int hourFrom, int minuteFrom,
-                                   int dayTo, int hourTo, int minuteTo) {
-        LocalDateTime from = LocalDateTime.of(YEAR, MONTH_05, dayFrom, hourFrom, minuteFrom);
-        LocalDateTime to = LocalDateTime.of(YEAR, MONTH_05, dayTo, hourTo, minuteTo);
-        appointmentSlotList.add(new AppointmentSlot(from, to));
-    }
-
 
     @Test
     public void whenAppointmentIsBeforeSearchRange() {
@@ -212,19 +203,19 @@ public class RangeSearchImplTest {
     public void searchInRangeOnTheSameDay() {
         List<AppointmentSlot> appointmentSlotList = new ArrayList<>();
 
-        LocalDateTime app1From = LocalDateTime.of(YEAR, 5, 5, 9, 0);
-        LocalDateTime app1To = LocalDateTime.of(YEAR, 5, 5, 10, 0);
-        appointmentSlotList.add(new AppointmentSlot(app1From, app1To));
+        createAppointment(appointmentSlotList,
+                5, 9, 0,
+                5, 10, 0);
 
-        LocalDateTime app2From = LocalDateTime.of(YEAR, 5, 5, 14, 30);
-        LocalDateTime app2To = LocalDateTime.of(YEAR, 5, 5, 15, 0);
-        appointmentSlotList.add(new AppointmentSlot(app2From, app2To));
+        createAppointment(appointmentSlotList,
+                5, 14, 30,
+                5, 15, 0);
 
-        LocalDateTime app3From = LocalDateTime.of(YEAR, 5, 5, 16, 30);
-        LocalDateTime app3To = LocalDateTime.of(YEAR, 5, 5, 17, 0);
-        appointmentSlotList.add(new AppointmentSlot(app3From, app3To));
+        createAppointment(appointmentSlotList,
+                5, 16, 30,
+                5, 17, 0);
 
-        List<AppointmentSlot> freeSlots = RangeSearchImpl.searchInRange2("2021-05-05", "2021-05-05", appointmentSlotList);
+        List<AppointmentSlot> freeSlots = RangeSearchImpl.searchInRange("2021-05-05", "2021-05-05", appointmentSlotList);
         Assert.assertEquals(freeSlots.size(), 5);
     }
 
@@ -232,28 +223,36 @@ public class RangeSearchImplTest {
     public void searchInRangeOnMultipleDays() {
         List<AppointmentSlot> appointmentSlotList = new ArrayList<>();
 
-        LocalDateTime app1From = LocalDateTime.of(YEAR, 5, 5, 9, 0);
-        LocalDateTime app1To = LocalDateTime.of(YEAR, 5, 5, 10, 0);
-        appointmentSlotList.add(new AppointmentSlot(app1From, app1To));
+        createAppointment(appointmentSlotList,
+                5, 9, 0,
+                5, 10, 0);
 
-        LocalDateTime app2From = LocalDateTime.of(YEAR, 5, 5, 14, 30);
-        LocalDateTime app2To = LocalDateTime.of(YEAR, 5, 5, 15, 0);
-        appointmentSlotList.add(new AppointmentSlot(app2From, app2To));
+        createAppointment(appointmentSlotList,
+                5, 14, 30,
+                5, 15, 0);
 
-        LocalDateTime app3From = LocalDateTime.of(YEAR, 5, 5, 16, 30);
-        LocalDateTime app3To = LocalDateTime.of(YEAR, 5, 5, 17, 0);
-        appointmentSlotList.add(new AppointmentSlot(app3From, app3To));
+        createAppointment(appointmentSlotList,
+                5, 16, 30,
+                5, 17, 0);
 
-        LocalDateTime app4From = LocalDateTime.of(YEAR, 5, 6, 13, 30);
-        LocalDateTime app4To = LocalDateTime.of(YEAR, 5, 6, 14, 30);
-        appointmentSlotList.add(new AppointmentSlot(app4From, app4To));
+        createAppointment(appointmentSlotList,
+                6, 13, 30,
+                6, 14, 30);
 
-        LocalDateTime app5From = LocalDateTime.of(YEAR, 5, 6, 16, 30);
-        LocalDateTime app5To = LocalDateTime.of(YEAR, 5, 6, 17, 0);
-        appointmentSlotList.add(new AppointmentSlot(app5From, app5To));
+        createAppointment(appointmentSlotList,
+                6, 16, 30,
+                6, 18, 0);
 
-        List<AppointmentSlot> freeSlots = RangeSearchImpl.searchInRange2("2021-05-05", "2021-05-06", appointmentSlotList);
-        Assert.assertEquals(freeSlots.size(), 7);
+        List<AppointmentSlot> freeSlots = RangeSearchImpl.searchInRange("2021-05-05", "2021-05-06", appointmentSlotList);
+        Assert.assertEquals(freeSlots.size(), 8);
+    }
+
+    private void createAppointment(List<AppointmentSlot> appointmentSlotList,
+                                   int dayFrom, int hourFrom, int minuteFrom,
+                                   int dayTo, int hourTo, int minuteTo) {
+        LocalDateTime from = LocalDateTime.of(YEAR, Month.MAY, dayFrom, hourFrom, minuteFrom);
+        LocalDateTime to = LocalDateTime.of(YEAR, Month.MAY, dayTo, hourTo, minuteTo);
+        appointmentSlotList.add(new AppointmentSlot(from, to));
     }
 
     @Test
@@ -264,7 +263,7 @@ public class RangeSearchImplTest {
         LocalDateTime app1To = LocalDateTime.of(YEAR, 5, 5, 10, 0);
         appointmentSlotList.add(new AppointmentSlot(app1From, app1To));
 
-        List<AppointmentSlot> freeSlots = RangeSearchImpl.searchInRange2("2021-05-05", "2021-05-05", appointmentSlotList);
+        List<AppointmentSlot> freeSlots = RangeSearchImpl.searchInRange("2021-05-05", "2021-05-05", appointmentSlotList);
         Assert.assertEquals(freeSlots.size(), 2);
     }
 
@@ -276,8 +275,52 @@ public class RangeSearchImplTest {
         LocalDateTime app1To = LocalDateTime.of(YEAR, 5, 5, 18, 0); // use end of day
         appointmentSlotList.add(new AppointmentSlot(app1From, app1To));
 
-        List<AppointmentSlot> freeSlots = RangeSearchImpl.searchInRange2("2021-05-05", "2021-05-05", appointmentSlotList);
+        List<AppointmentSlot> freeSlots = RangeSearchImpl.searchInRange("2021-05-05", "2021-05-05", appointmentSlotList);
         Assert.assertEquals(freeSlots.size(), 2);
     }
 
+    @Test
+    public void getSameDayAppointmentsMapWhenOnlyOneDay() {
+        List<AppointmentSlot> appointmentSlotList = new ArrayList<>();
+
+        createAppointment(appointmentSlotList,
+                5, 9, 0,
+                5, 10, 0);
+
+        createAppointment(appointmentSlotList,
+                5, 14, 30,
+                5, 15, 0);
+
+        HashMap<LocalDate, List<AppointmentSlot>> sameDayAppointmentsMap = RangeSearchImpl.getSameDayAppointmentsMap(appointmentSlotList);
+
+        LocalDate expectedKey = LocalDate.of(YEAR, Month.MAY, 5);
+        Assert.assertEquals(sameDayAppointmentsMap.keySet().size(), 1);
+        Assert.assertEquals(sameDayAppointmentsMap.get(expectedKey).size(), 2);
+    }
+
+    @Test
+    public void getSameDayAppointmentsWhenMultipleDays() {
+        List<AppointmentSlot> appointmentSlotList = new ArrayList<>();
+
+        createAppointment(appointmentSlotList,
+                5, 9, 0,
+                5, 10, 0);
+
+        createAppointment(appointmentSlotList,
+                6, 13, 30,
+                6, 14, 30);
+
+        createAppointment(appointmentSlotList,
+                6, 16, 30,
+                6, 18, 0);
+
+        HashMap<LocalDate, List<AppointmentSlot>> sameDayAppointmentsMap = RangeSearchImpl.getSameDayAppointmentsMap(appointmentSlotList);
+
+        LocalDate expectedKeyDay5 = LocalDate.of(YEAR, Month.MAY, 5);
+        LocalDate expectedKeyDay6 = LocalDate.of(YEAR, Month.MAY, 6);
+
+        Assert.assertEquals(sameDayAppointmentsMap.keySet().size(), 2);
+        Assert.assertEquals(sameDayAppointmentsMap.get(expectedKeyDay5).size(), 1);
+        Assert.assertEquals(sameDayAppointmentsMap.get(expectedKeyDay6).size(), 2);
+    }
 }

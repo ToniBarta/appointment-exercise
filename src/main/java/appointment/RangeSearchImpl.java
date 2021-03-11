@@ -12,7 +12,7 @@ import static appointment.AppoinmentConsts.*;
 
 public class RangeSearchImpl {
 
-    public static List<AppointmentSlot> searchInRange2(String from, String to, List<AppointmentSlot> appointmentSlotList) {
+    public static List<AppointmentSlot> searchInRange(String from, String to, List<AppointmentSlot> appointmentSlotList) {
         LocalDate fromSearchRangeLocalDate = createLocalDate(from);
         LocalDate toSearchRangeLocalDate = createLocalDate(to);
 
@@ -31,9 +31,48 @@ public class RangeSearchImpl {
                 createFreeSlotsWhenOnlyOneAppointmentPerDay(freeAppointments, appointmentsOfTheDay);
             }
 
+            if (appointmentsOfTheDay.size() > 1) {
+                createFreeSlotsForTheDay(freeAppointments, appointmentsOfTheDay);
+            }
         }
         System.out.println(freeAppointments);
         return freeAppointments;
+    }
+
+    protected static void createFreeSlotsForTheDay(List<AppointmentSlot> freeAppointments, List<AppointmentSlot> appointmentsOfTheDay) {
+        AppointmentSlot appointmentSlot = appointmentsOfTheDay.get(0);
+        LocalDate appointmentSlotLocalDateFrom = appointmentSlot.getFrom().toLocalDate();
+
+        List<AppointmentSlot> appointmentsOfTheDayWithLunch = new ArrayList<>(List.copyOf(appointmentsOfTheDay));
+        // adding lunch to the appointment list
+        appointmentsOfTheDayWithLunch.add(new AppointmentSlot(
+                LocalDateTime.of(appointmentSlotLocalDateFrom, START_OF_LUNCH),
+                LocalDateTime.of(appointmentSlotLocalDateFrom, END_OF_LUNCH)));
+
+        // extract in a method
+        Comparator<AppointmentSlot> compareByLocaleDateTimeAgain = Comparator.comparing(AppointmentSlot::getFrom);
+        appointmentsOfTheDayWithLunch.sort(compareByLocaleDateTimeAgain);
+
+        boolean freeSlotFromStartOfDay = true;
+        for (int index = 0; index < appointmentsOfTheDayWithLunch.size() - 1; index++) {
+            AppointmentSlot currentApp = appointmentsOfTheDayWithLunch.get(index);
+            LocalTime currentLocalTimeFrom = currentApp.getFrom().toLocalTime();
+            LocalDate currentLocaleDateFrom = currentApp.getFrom().toLocalDate();
+
+            AppointmentSlot nextApp = appointmentsOfTheDayWithLunch.get(index + 1);
+
+            if (currentLocalTimeFrom.isAfter(START_OF_DAY) && freeSlotFromStartOfDay) {
+                freeAppointments.add(new AppointmentSlot(LocalDateTime.of(currentLocaleDateFrom, START_OF_DAY), currentApp.getFrom()));
+                freeAppointments.add(new AppointmentSlot(currentApp.getTo(), nextApp.getFrom()));
+                freeSlotFromStartOfDay = false;
+            } else {
+                freeAppointments.add(new AppointmentSlot(currentApp.getTo(), nextApp.getFrom()));
+            }
+        }
+        AppointmentSlot lastApp = appointmentsOfTheDayWithLunch.get(appointmentsOfTheDayWithLunch.size() - 1);
+        if (lastApp.getTo().isBefore(LocalDateTime.of(lastApp.getFrom().toLocalDate(), END_OF_DAY))) {
+            freeAppointments.add(new AppointmentSlot(lastApp.getTo(), LocalDateTime.of(lastApp.getFrom().toLocalDate(), END_OF_DAY)));
+        }
     }
 
     protected static List<AppointmentSlot> createFreeSlotsWhenOnlyOneAppointmentPerDay(List<AppointmentSlot> freeAppointments, List<AppointmentSlot> appointmentsOfTheDay) {
@@ -79,7 +118,7 @@ public class RangeSearchImpl {
         return freeAppointments;
     }
 
-    private static HashMap<LocalDate, List<AppointmentSlot>> getSameDayAppointmentsMap(List<AppointmentSlot> appointmentsBetweenRangeList) {
+    protected static HashMap<LocalDate, List<AppointmentSlot>> getSameDayAppointmentsMap(List<AppointmentSlot> appointmentsBetweenRangeList) {
         HashMap<LocalDate, List<AppointmentSlot>> mapOfSameDayAppointments = new HashMap<>();
         for (AppointmentSlot appointmentSlot : appointmentsBetweenRangeList) {
             LocalDate localDateOfAppointmentKey = appointmentSlot.getFrom().toLocalDate();
@@ -102,10 +141,6 @@ public class RangeSearchImpl {
         return appointmentSlotList.stream()
                 .filter(appointmentSlot -> isBetweenSearchRange(fromSearchRangeLocalDate, toSearchRangeLocalDate, appointmentSlot.getFrom().toLocalDate()))
                 .collect(Collectors.toList());
-    }
-
-    protected static boolean isLunchTime(LocalTime ongoingLocalTime) {
-        return ongoingLocalTime.equals(START_OF_LUNCH) || (ongoingLocalTime.isAfter(START_OF_LUNCH) && ongoingLocalTime.isBefore(END_OF_LUNCH));
     }
 
     protected static boolean isBetweenSearchRange(LocalDate fromSearchRangeLocalDate, LocalDate
