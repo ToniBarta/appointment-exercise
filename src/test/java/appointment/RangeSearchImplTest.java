@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static appointment.AppoinmentConsts.*;
+import static appointment.AppointmentConst.*;
 
 public class RangeSearchImplTest {
 

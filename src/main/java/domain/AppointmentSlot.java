@@ -12,7 +12,6 @@ public class AppointmentSlot {
         this.to = to;
     }
 
-
     public LocalDateTime getFrom() {
         return from;
     }

@@ -2,7 +2,7 @@ package appointment;
 
 import java.time.LocalTime;
 
-public class AppoinmentConsts {
+public class AppointmentConst {
 
     public static LocalTime START_OF_DAY = LocalTime.of(8, 0);
     public static LocalTime END_OF_DAY = LocalTime.of(18, 0);

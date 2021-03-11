@@ -8,7 +8,7 @@ import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static appointment.AppoinmentConsts.*;
+import static appointment.AppointmentConst.*;
 
 public class RangeSearchImpl {
 
