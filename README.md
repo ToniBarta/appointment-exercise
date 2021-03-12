@@ -47,6 +47,9 @@ in the end the bulk of logic was similar with what I did.
     * DELETE a booking
     * PUT update a booking to a different times
 
+2. In the end what we want is a nice UI that will have users, and a database to store all
+this information.
+
 
 
 
