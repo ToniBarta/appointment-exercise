@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="denteo-appointment-console:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/denteo_appointment_console_jar</output-path>
+    <root id="archive" name="denteo-appointment-console.jar">
+      <element id="module-output" name="denteo-appointment-console" />
+    </root>
+  </artifact>
+</component>

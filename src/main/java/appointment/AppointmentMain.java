@@ -96,7 +96,7 @@ public class AppointmentMain {
         appointments.add(new AppointmentSlot(now.atTime(17, 0), now.atTime(18, 0)));
 
         now = now.plusDays(1);
-        appointments.add(new AppointmentSlot(now.atTime(11, 30), now.atTime(12, 0)));
+        appointments.add(new AppointmentSlot(now.atTime(10, 30), now.atTime(11, 30)));
         appointments.add(new AppointmentSlot(now.atTime(13, 0), now.atTime(14, 30)));
 
         now = now.plusDays(1);
