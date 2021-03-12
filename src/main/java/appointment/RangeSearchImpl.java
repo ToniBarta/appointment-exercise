@@ -62,7 +62,9 @@ public class RangeSearchImpl {
 
             if (currentLocalTimeFrom.isAfter(START_OF_DAY) && freeSlotFromStartOfDay) {
                 freeAppointments.add(new AppointmentSlot(LocalDateTime.of(currentLocaleDateFrom, START_OF_DAY), currentApp.getFrom()));
-                freeAppointments.add(new AppointmentSlot(currentApp.getTo(), nextApp.getFrom()));
+                if (!currentApp.getTo().equals(nextApp.getFrom())) {
+                    freeAppointments.add(new AppointmentSlot(currentApp.getTo(), nextApp.getFrom()));
+                }
                 freeSlotFromStartOfDay = false;
             } else {
                 if (currentLocalTimeFrom.equals(START_OF_DAY)) {
